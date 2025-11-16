@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>BrickScan – App Android per appassionati LEGO®</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="BrickScan è un'app Android che riconosce i set LEGO® da una foto e mostra informazioni e link ai rivenditori ufficiali.">
+    <style>
+        :root {
+            --bg: #0b1120;
+            --card: #111827;
+            --accent: #facc15;
+            --accent-soft: #fde68a;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #111827, #020617);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px 16px 48px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #f97316, #facc15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 20px;
+            color: #111827;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+
+        .logo-text-main {
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.02em;
+        }
+
+        .logo-text-sub {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(250, 204, 21, 0.4);
+            font-size: 12px;
+            color: var(--accent-soft);
+            background: rgba(24, 24, 27, 0.7);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .hero-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 12px;
+        }
+
+        .hero-highlight {
+            color: var(--accent-soft);
+        }
+
+        .hero-text {
+            color: var(--muted);
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: none;
+            cursor: default;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--accent);
+            color: #111827;
+            box-shadow: 0 10px 25px rgba(250, 204, 21, 0.25);
+        }
+
+        .btn-ghost {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            font-size: 13px;
+            color: var(--muted);
+            background: transparent;
+        }
+
+        .tagline {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .hero-card {
+            background: radial-gradient(circle at top left, #1f2937, #020617);
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 18px 40px rgba(15,23,42,0.85);
+        }
+
+        .phone-frame {
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            padding: 12px;
+            max-width: 260px;
+            margin: 0 auto;
+            background: radial-gradient(circle at top, #020617, #020617);
+        }
+
+        .phone-screen {
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #0f172a, #020617);
+            border: 1px solid rgba(15,23,42,0.9);
+            padding: 12px;
+        }
+
+        .phone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .phone-chip {
+            font-size: 10px;
+            padding: 4px 6px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.2);
+            color: #a5f3fc;
+        }
+
+        .phone-card {
+            background: rgba(15,23,42,0.96);
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            margin-bottom: 8px;
+        }
+
+        .phone-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .phone-card-meta {
+            font-size: 10px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .phone-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            padding: 4px 6px;
+            border-radius: 999px;
+            background: rgba(250, 204, 21, 0.08);
+            color: var(--accent-soft);
+        }
+
+        .section {
+            background: radial-gradient(circle at top left, rgba(15,23,42,0.95), rgba(15,23,42,1));
+            border-radius: 18px;
+            padding: 18px 16px;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 10px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .feature {
+            padding: 10px 10px 12px;
+            border-radius: 14px;
+            background: rgba(15,23,42,0.95);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+        }
+
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .feature-text {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .list {
+            font-size: 13px;
+            color: var(--muted);
+            padding-left: 18px;
+        }
+
+        .list li {
+            margin-bottom: 4px;
+        }
+
+        footer {
+            margin-top: 24px;
+            font-size: 11px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        a {
+            color: var(--accent-soft);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .legal {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <div class="logo">
+            <div class="logo-mark">B</div>
+            <div>
+                <div class="logo-text-main">BrickScan</div>
+                <div class="logo-text-sub">Companion app per appassionati LEGO®</div>
+            </div>
+        </div>
+        <div class="badge">
+            Mobile app Android · Content &amp; Media
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div>
+                <h1 class="hero-title">
+                    Riconosci i set <span class="hero-highlight">LEGO®</span> da una foto
+                </h1>
+                <p class="hero-text">
+                    BrickScan è un’app Android sperimentale che utilizza il riconoscimento
+                    visivo per aiutare gli utenti a identificare i set LEGO® e a trovare
+                    informazioni utili, inclusi link verso rivenditori online selezionati.
+                </p>
+
+                <div class="hero-actions">
+                    <button class="btn-primary" type="button">
+                        App in fase di test su Google Play
+                    </button>
+                    <div class="btn-ghost">
+                        Canale principale: Mobile App · Contenuti informativi
+                    </div>
+                </div>
+
+                <div class="tagline">
+                    Questa pagina descrive il progetto BrickScan come spazio promozionale
+                    per network di affiliazione (es. Rakuten/Retailer Partners).
+                </div>
+            </div>
+
+            <div class="hero-card">
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <div class="phone-header">
+                            <span>BrickScan · Preview</span>
+                            <span class="phone-chip">AI Set Match</span>
+                        </div>
+
+                        <div class="phone-card">
+                            <div class="phone-card-title">Set identificato</div>
+                            <div class="phone-card-meta">
+                                Esempio: Astronave da collezione · 1352 pezzi · 12+
+                            </div>
+                            <div class="phone-pill">
+                                🔍 Suggerisci acquisto
+                            </div>
+                        </div>
+
+                        <div class="phone-card">
+                            <div class="phone-card-title">Link ai rivenditori</div>
+                            <div class="phone-card-meta">
+                                L’app può proporre link affiliati verso store partner
+                                (ad es. sito ufficiale del produttore o retailer autorizzati).
+                            </div>
+                        </div>
+
+                        <div class="phone-card">
+                            <div class="phone-card-title">Focus contenuti</div>
+                            <div class="phone-card-meta">
+                                L’obiettivo principale è informativo: schede set, immagini, dati
+                                e suggerimenti per la collezione.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Panoramica del progetto</h2>
+            <p class="section-subtitle">
+                BrickScan è sviluppata come app nativa Android (Kotlin, Jetpack Compose) e si rivolge
+                ad appassionati e collezionisti di mattoncini. L’app integra un modello di
+                machine learning per il riconoscimento dei set e un pannello di informazioni
+                strutturate.
+            </p>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">Riconoscimento visivo</div>
+                    <div class="feature-text">
+                        L’utente scatta una foto o seleziona un’immagine dalla galleria. L’app stima
+                        il set più probabile e mostra il relativo profilo informativo.
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Schede set e dettagli</div>
+                    <div class="feature-text">
+                        Per ogni set sono previste schede con nome, codice, anno di uscita, numero
+                        di pezzi, fascia di età e immagini illustrative (dati raccolti da fonti pubbliche).
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Link affiliati contestuali</div>
+                    <div class="feature-text">
+                        Quando disponibile, l’app può mostrare un pulsante per visitare il sito del
+                        retailer o del brand tramite link affiliati, senza spam né comparatori aggressivi.
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Esperienza non intrusiva</div>
+                    <div class="feature-text">
+                        L’affiliazione è pensata come complemento: l’obiettivo principale resta la
+                        consultazione dei contenuti editoriali e delle informazioni sui set.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Come verrebbero utilizzati i link affiliati</h2>
+            <p class="section-subtitle">
+                I link affiliati hanno un ruolo di supporto all’esperienza utente, non di vendita diretta.
+            </p>
+            <ul class="list">
+                <li>
+                    Il link appare solo su schermate informative di dettaglio del set, come pulsante
+                    opzionale “Visita lo store”.
+                </li>
+                <li>
+                    Nessun reindirizzamento automatico, popup invasivi o forzature: l’utente decide
+                    se aprire o meno lo store.
+                </li>
+                <li>
+                    È previsto un testo chiaro che informa l’utente dell’eventuale natura affiliata
+                    del link (trasparenza verso il pubblico).
+                </li>
+                <li>
+                    L’app non offre cashback, codici sconto o programmi di loyalty interni: è un
+                    progetto di contenuti editoriali a tema collezionismo.
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Stato del progetto e contatti</h2>
+            <p class="section-subtitle">
+                BrickScan è attualmente in fase di test interno su Google Play (release di prova)
+                ed è pensata per un rilascio pubblico successivo, una volta completata la validazione
+                tecnica e l’integrazione conforme alle linee guida dei partner.
+            </p>
+            <ul class="list">
+                <li>Canale principale: Mobile App Android (Content &amp; Media).</li>
+                <li>Target: appassionati e collezionisti di mattoncini e set da costruzione.</li>
+                <li>Modello: contenuti editoriali + eventuali link affiliati discreti e contestuali.</li>
+            </ul>
+
+            <p class="section-subtitle">
+                Per informazioni sul progetto o per richieste legate a partnership e affiliazioni,
+                è possibile utilizzare l’indirizzo email associato all’account del developer
+                su Google Play / network di affiliazione.
+            </p>
+
+            <p class="legal">
+                LEGO® è un marchio registrato del Gruppo LEGO, che non sponsorizza, autorizza
+                o supporta questa applicazione. BrickScan è un progetto indipendente di terze parti,
+                pensato come strumento informativo per i fan.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        BrickScan – Pagina informativa del progetto · Ideale come URL di riferimento per network di affiliazione
+    </footer>
+</div>
+</body>
+</html>
